@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modo antirracista</title>
+<link rel="shortcut icon" href="img/logo-diafar.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400..700&display=swap">
+<style>
+/* Layout: una sola columna angosta, una pantalla por vez (inicio, situación, cierre), pensada primero para celular.
+   Paleta: los cuatro colores del logo de DIAFAR (verde, celeste, amarillo, fucsia) sobre negro y blanco. */
+:root {
+  /* Colores del logo (iguales en claro y oscuro) */
+  --green: #01E493;
+  --blue: #00AAE2;
+  --yellow: #FFC01A;
+  --pink: #D74097;
+  --ink: #0A0A0A;
+
+  /* Neutros y estados (versión clara) */
+  --bg: #F2F3F3;
+  --surface: #FFFFFF;
+  --surface-2: #E6E8E8;
+  --fg: #0A0A0A;
+  --muted: #4D5154;
+  --line: #D2D6D6;
+  --hero-bg: #1F2022;
+  --ok: #007A52;
+  --ok-bg: #DCF7EC;
+  --ok-fg: #FFFFFF;
+  --bad: #B02479;
+  --bad-bg: #FADFEF;
+  --bad-fg: #FFFFFF;
+  --qr-bg: #FFFFFF;
+  --qr-fg: #000000;
+
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 18px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E0F10;
+    --surface: #18191B;
+    --surface-2: #232527;
+    --fg: #F4F5F5;
+    --muted: #A7ACAF;
+    --line: #33363A;
+    --hero-bg: #1F2022;
+    --ok: #01E493;
+    --ok-bg: #0B2D22;
+    --ok-fg: #04201A;
+    --bad: #FF7DC0;
+    --bad-bg: #37152B;
+    --bad-fg: #2B0A1F;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E0F10;
+  --surface: #18191B;
+  --surface-2: #232527;
+  --fg: #F4F5F5;
+  --muted: #A7ACAF;
+  --line: #33363A;
+  --hero-bg: #1F2022;
+  --ok: #01E493;
+  --ok-bg: #0B2D22;
+  --ok-fg: #04201A;
+  --bad: #FF7DC0;
+  --bad-bg: #37152B;
+  --bad-fg: #2B0A1F;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  min-height: 100%;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.app { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+.screen { display: flex; flex-direction: column; gap: 20px; animation: rise .35s ease-out both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* Barra superior */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brandmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.counter { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.steps { display: flex; align-items: center; gap: 6px; }
+.step { flex: 1; height: 6px; border-radius: 3px; background: var(--line); }
+.step.done, .step.now { background: var(--c); }
+.step.now { height: 10px; }
+
+/* Inicio */
+.hero {
+  margin: 0;
+  border-radius: 22px;
+  background: var(--hero-bg);
+  aspect-ratio: 16 / 10;
+  max-width: 100%;
+  display: grid;
+  place-items: center;
+}
+.hero img { display: block; width: min(64%, 280px); height: auto; aspect-ratio: 1; border-radius: 50%; }
+h1.title {
+  font-size: clamp(2rem, 8.5vw, 3.1rem);
+  line-height: 1.04;
+  font-weight: 800;
+}
+.title .q {
+  background: linear-gradient(90deg, var(--green), var(--blue), var(--yellow), var(--pink)) 0 100% / 100% .16em no-repeat;
+  padding-bottom: .1em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.lead { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; line-height: 1.2; }
+.copy { display: flex; flex-direction: column; gap: 12px; max-width: 65ch; }
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Botones */
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 28px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--yellow);
+  color: var(--ink);
+  transition: transform .12s ease, filter .12s ease;
+}
+.btn:hover { filter: brightness(1.06); }
+.btn:active { transform: translateY(1px); }
+.btn.ghost { background: transparent; color: var(--fg); border-color: var(--fg); }
+.btn.full { width: 100%; }
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn:focus-visible, .opt:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+[tabindex="-1"]:focus { outline: none; }
+
+/* Situación */
+.who { display: flex; align-items: center; gap: 14px; }
+.chip {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--c);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.9rem;
+  line-height: 1;
+}
+.who-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.who h2 { font-size: clamp(2.1rem, 9vw, 2.8rem); font-weight: 800; line-height: 1; }
+.who .theme { color: var(--muted); font-size: 1rem; line-height: 1.3; }
+.panel {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.question { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; line-height: 1.2; text-wrap: balance; }
+.options { display: flex; flex-direction: column; gap: 10px; }
+.opt {
+  appearance: none;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 24px;
+  align-items: start;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 14px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.45;
+  cursor: pointer;
+  transition: border-color .12s ease, background-color .12s ease;
+}
+.opt:hover { border-color: var(--fg); }
+.opt .letter {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+}
+.opt-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-top: 7px; }
+.tag { font-family: var(--font-display); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.ic { width: 24px; height: 24px; margin-top: 7px; }
+.opt[aria-disabled="true"] { cursor: default; }
+.opt[aria-disabled="true"]:hover { border-color: var(--line); }
+.opt[data-state="correct"], .opt[data-state="correct"]:hover { border-color: var(--ok); background: var(--ok-bg); }
+.opt[data-state="correct"] .letter { background: var(--ok); color: var(--ok-fg); }
+.opt[data-state="correct"] .tag, .opt[data-state="correct"] .ic { color: var(--ok); }
+.opt[data-state="wrong"], .opt[data-state="wrong"]:hover { border-color: var(--bad); background: var(--bad-bg); }
+.opt[data-state="wrong"] .letter { background: var(--bad); color: var(--bad-fg); }
+.opt[data-state="wrong"] .tag, .opt[data-state="wrong"] .ic { color: var(--bad); }
+.opt[data-state="dim"] { opacity: .62; }
+
+/* Devolución */
+.feedback { gap: 14px; scroll-margin-top: 16px; }
+.pill {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+}
+.pill svg { width: 20px; height: 20px; }
+.pill.ok { background: var(--ok-bg); color: var(--ok); }
+.pill.bad { background: var(--bad-bg); color: var(--bad); }
+.fb-msg { max-width: 65ch; }
+.chapter {
+  background: var(--surface-2);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.chapter p { max-width: 55ch; }
+
+/* Cierre */
+.end-title { font-size: clamp(1.8rem, 7.5vw, 2.5rem); line-height: 1.08; font-weight: 800; }
+.series { gap: 16px; }
+.series h3 { font-size: 1.35rem; line-height: 1.15; }
+.series-row { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; }
+.qr {
+  width: 225px;
+  max-width: 100%;
+  aspect-ratio: 1;
+  background: var(--qr-bg);
+  border-radius: 12px;
+  box-shadow: 0 0 0 2px var(--line);
+  flex: none;
+  overflow: hidden;
+}
+.qr svg { display: block; width: 100%; height: 100%; }
+.qr path { fill: var(--qr-fg); }
+.series-actions { display: flex; flex-direction: column; gap: 10px; flex: 1 1 200px; min-width: 0; }
+.series-actions .hint { font-size: 15px; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .screen { animation: none; }
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+<main class="app">
+
+  <div class="topbar" id="topbar">
+    <span class="brandmark">Modo antirracista</span>
+    <span class="counter" id="counter" hidden></span>
+  </div>
+
+  <div class="steps" id="steps" hidden aria-hidden="true"></div>
+
+  <!-- INICIO -->
+  <section class="screen" id="screen-start" aria-labelledby="game-title">
+    <!-- Imagen de portada: reemplazar el <img> por otra foto cuando quieran -->
+    <figure class="hero" id="foto">
+      <img src="./img/logo-diafar.webp">    
+    </figure>
+
+    <h1 class="title" id="game-title">Modo antirracista: <span class="q">¿dónde aparece el racismo?</span></h1>
+
+    <div class="copy">
+      <p class="lead">¿Creés que podés reconocerlo?</p>
+      <p>El racismo no siempre aparece de forma evidente. A veces está presente en comentarios, costumbres y situaciones que tenemos tan naturalizadas que nos cuesta reconocerlas.</p>
+      <p>Te proponemos cinco situaciones para poner a prueba lo que sabés, cuestionar algunas ideas y descubrir dónde puede aparecer el racismo.</p>
+    </div>
+
+    <button class="btn full" type="button" id="btn-start">Comenzar</button>
+  </section>
+
+  <!-- SITUACIONES -->
+  <section class="screen" id="screen-quiz" aria-labelledby="who-name" hidden>
+    <div class="who">
+      <span class="chip" id="chip" aria-hidden="true"></span>
+      <div class="who-text">
+        <h2 id="who-name" tabindex="-1"></h2>
+        <p class="theme" id="who-theme"></p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <span class="label">Situación</span>
+      <p id="situacion"></p>
+    </div>
+
+    <div class="panel">
+      <span class="label">Pregunta</span>
+      <p class="question" id="pregunta"></p>
+    </div>
+
+    <div class="options" id="options" role="group" aria-labelledby="pregunta"></div>
+
+    <div class="panel feedback" id="feedback" hidden>
+      <div class="pill" id="pill" tabindex="-1"></div>
+      <p class="fb-msg" id="fb-msg"></p>
+
+      <div class="chapter">
+        <span class="label">Capítulo recomendado</span>
+        <p>Si querés profundizar en esta situación, mirá este capítulo de la serie de DIAFAR.</p>
+        <a class="btn ghost full" id="chapter-link" href="#" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+          <span>Ver el capítulo en YouTube<span class="sr"> (se abre en otra pestaña)</span></span>
+        </a>
+      </div>
+
+      <button class="btn full" type="button" id="btn-next">Siguiente situación</button>
+    </div>
+  </section>
+
+  <!-- CIERRE -->
+  <section class="screen" id="screen-end" aria-labelledby="end-title" hidden>
+    <div class="copy">
+      <p class="eyebrow">Cierre</p>
+      <h2 class="end-title" id="end-title" tabindex="-1">¿Cuánto de lo que consideramos normal merece ser cuestionado?</h2>
+      <p>El racismo no se limita a las agresiones explícitas ni a las actitudes individuales. También se reproduce en las instituciones, los discursos, las representaciones culturales y las formas en que construimos nuestra identidad como sociedad.</p>
+      <p>Reconocer estas prácticas es un primer paso para cuestionarlas y transformarlas.</p>
+    </div>
+
+    <div class="panel series">
+      <h3>Seguí aprendiendo con DIAFAR</h3>
+      <p>Te invitamos a conocer nuestra serie de capítulos y profundizar en las distintas formas en las que se manifiesta el racismo en Argentina.</p>
+      <div class="series-row">
+        <!-- QR fijo (negro sobre blanco, con margen), generado de antemano: no depende de internet ni de ninguna librería -->
+        <div class="qr" id="qr" role="img" aria-label="Código QR que lleva a la serie de DIAFAR en YouTube">
+          <svg viewBox="-4 -4 45 45" shape-rendering="crispEdges" aria-hidden="true"><path d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM8 0h1v1h-1zM9 0h1v1h-1zM10 0h1v1h-1zM12 0h1v1h-1zM16 0h1v1h-1zM17 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM21 0h1v1h-1zM22 0h1v1h-1zM23 0h1v1h-1zM26 0h1v1h-1zM27 0h1v1h-1zM28 0h1v1h-1zM30 0h1v1h-1zM31 0h1v1h-1zM32 0h1v1h-1zM33 0h1v1h-1zM34 0h1v1h-1zM35 0h1v1h-1zM36 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM10 1h1v1h-1zM11 1h1v1h-1zM12 1h1v1h-1zM13 1h1v1h-1zM15 1h1v1h-1zM19 1h1v1h-1zM22 1h1v1h-1zM30 1h1v1h-1zM36 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM10 2h1v1h-1zM13 2h1v1h-1zM14 2h1v1h-1zM15 2h1v1h-1zM16 2h1v1h-1zM17 2h1v1h-1zM18 2h1v1h-1zM21 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM28 2h1v1h-1zM30 2h1v1h-1zM32 2h1v1h-1zM33 2h1v1h-1zM34 2h1v1h-1zM36 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM8 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM15 3h1v1h-1zM16 3h1v1h-1zM17 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM23 3h1v1h-1zM25 3h1v1h-1zM26 3h1v1h-1zM27 3h1v1h-1zM28 3h1v1h-1zM30 3h1v1h-1zM32 3h1v1h-1zM33 3h1v1h-1zM34 3h1v1h-1zM36 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM9 4h1v1h-1zM10 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM17 4h1v1h-1zM20 4h1v1h-1zM23 4h1v1h-1zM25 4h1v1h-1zM26 4h1v1h-1zM27 4h1v1h-1zM30 4h1v1h-1zM32 4h1v1h-1zM33 4h1v1h-1zM34 4h1v1h-1zM36 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM11 5h1v1h-1zM12 5h1v1h-1zM15 5h1v1h-1zM16 5h1v1h-1zM17 5h1v1h-1zM19 5h1v1h-1zM20 5h1v1h-1zM21 5h1v1h-1zM22 5h1v1h-1zM28 5h1v1h-1zM30 5h1v1h-1zM36 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM28 6h1v1h-1zM30 6h1v1h-1zM31 6h1v1h-1zM32 6h1v1h-1zM33 6h1v1h-1zM34 6h1v1h-1zM35 6h1v1h-1zM36 6h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM12 7h1v1h-1zM20 7h1v1h-1zM21 7h1v1h-1zM22 7h1v1h-1zM23 7h1v1h-1zM27 7h1v1h-1zM0 8h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM10 8h1v1h-1zM13 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM19 8h1v1h-1zM20 8h1v1h-1zM23 8h1v1h-1zM24 8h1v1h-1zM29 8h1v1h-1zM30 8h1v1h-1zM31 8h1v1h-1zM32 8h1v1h-1zM33 8h1v1h-1zM36 8h1v1h-1zM2 9h1v1h-1zM3 9h1v1h-1zM7 9h1v1h-1zM9 9h1v1h-1zM10 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM14 9h1v1h-1zM18 9h1v1h-1zM19 9h1v1h-1zM21 9h1v1h-1zM25 9h1v1h-1zM26 9h1v1h-1zM28 9h1v1h-1zM30 9h1v1h-1zM32 9h1v1h-1zM35 9h1v1h-1zM1 10h1v1h-1zM2 10h1v1h-1zM6 10h1v1h-1zM8 10h1v1h-1zM9 10h1v1h-1zM10 10h1v1h-1zM14 10h1v1h-1zM15 10h1v1h-1zM17 10h1v1h-1zM19 10h1v1h-1zM21 10h1v1h-1zM22 10h1v1h-1zM23 10h1v1h-1zM24 10h1v1h-1zM25 10h1v1h-1zM27 10h1v1h-1zM28 10h1v1h-1zM29 10h1v1h-1zM30 10h1v1h-1zM32 10h1v1h-1zM33 10h1v1h-1zM34 10h1v1h-1zM3 11h1v1h-1zM7 11h1v1h-1zM9 11h1v1h-1zM10 11h1v1h-1zM11 11h1v1h-1zM13 11h1v1h-1zM14 11h1v1h-1zM15 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM19 11h1v1h-1zM20 11h1v1h-1zM21 11h1v1h-1zM23 11h1v1h-1zM26 11h1v1h-1zM27 11h1v1h-1zM28 11h1v1h-1zM31 11h1v1h-1zM34 11h1v1h-1zM35 11h1v1h-1zM2 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM6 12h1v1h-1zM7 12h1v1h-1zM8 12h1v1h-1zM10 12h1v1h-1zM12 12h1v1h-1zM13 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM27 12h1v1h-1zM29 12h1v1h-1zM30 12h1v1h-1zM34 12h1v1h-1zM35 12h1v1h-1zM36 12h1v1h-1zM1 13h1v1h-1zM2 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM12 13h1v1h-1zM13 13h1v1h-1zM16 13h1v1h-1zM18 13h1v1h-1zM21 13h1v1h-1zM22 13h1v1h-1zM23 13h1v1h-1zM26 13h1v1h-1zM27 13h1v1h-1zM28 13h1v1h-1zM32 13h1v1h-1zM33 13h1v1h-1zM35 13h1v1h-1zM0 14h1v1h-1zM1 14h1v1h-1zM3 14h1v1h-1zM4 14h1v1h-1zM5 14h1v1h-1zM6 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM15 14h1v1h-1zM17 14h1v1h-1zM20 14h1v1h-1zM23 14h1v1h-1zM24 14h1v1h-1zM27 14h1v1h-1zM28 14h1v1h-1zM29 14h1v1h-1zM30 14h1v1h-1zM31 14h1v1h-1zM32 14h1v1h-1zM33 14h1v1h-1zM34 14h1v1h-1zM35 14h1v1h-1zM0 15h1v1h-1zM2 15h1v1h-1zM4 15h1v1h-1zM5 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM19 15h1v1h-1zM22 15h1v1h-1zM23 15h1v1h-1zM28 15h1v1h-1zM29 15h1v1h-1zM30 15h1v1h-1zM31 15h1v1h-1zM32 15h1v1h-1zM34 15h1v1h-1zM35 15h1v1h-1zM36 15h1v1h-1zM0 16h1v1h-1zM1 16h1v1h-1zM3 16h1v1h-1zM4 16h1v1h-1zM5 16h1v1h-1zM6 16h1v1h-1zM7 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM12 16h1v1h-1zM18 16h1v1h-1zM19 16h1v1h-1zM22 16h1v1h-1zM24 16h1v1h-1zM28 16h1v1h-1zM30 16h1v1h-1zM32 16h1v1h-1zM33 16h1v1h-1zM34 16h1v1h-1zM1 17h1v1h-1zM4 17h1v1h-1zM5 17h1v1h-1zM7 17h1v1h-1zM9 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM13 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM19 17h1v1h-1zM20 17h1v1h-1zM23 17h1v1h-1zM28 17h1v1h-1zM29 17h1v1h-1zM32 17h1v1h-1zM33 17h1v1h-1zM35 17h1v1h-1zM6 18h1v1h-1zM7 18h1v1h-1zM14 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h1v1h-1zM23 18h1v1h-1zM25 18h1v1h-1zM26 18h1v1h-1zM27 18h1v1h-1zM30 18h1v1h-1zM31 18h1v1h-1zM34 18h1v1h-1zM0 19h1v1h-1zM1 19h1v1h-1zM2 19h1v1h-1zM3 19h1v1h-1zM4 19h1v1h-1zM8 19h1v1h-1zM10 19h1v1h-1zM11 19h1v1h-1zM13 19h1v1h-1zM17 19h1v1h-1zM21 19h1v1h-1zM23 19h1v1h-1zM26 19h1v1h-1zM27 19h1v1h-1zM28 19h1v1h-1zM30 19h1v1h-1zM31 19h1v1h-1zM34 19h1v1h-1zM35 19h1v1h-1zM0 20h1v1h-1zM4 20h1v1h-1zM6 20h1v1h-1zM7 20h1v1h-1zM9 20h1v1h-1zM11 20h1v1h-1zM13 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM19 20h1v1h-1zM21 20h1v1h-1zM22 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM27 20h1v1h-1zM29 20h1v1h-1zM30 20h1v1h-1zM31 20h1v1h-1zM34 20h1v1h-1zM0 21h1v1h-1zM2 21h1v1h-1zM3 21h1v1h-1zM4 21h1v1h-1zM5 21h1v1h-1zM9 21h1v1h-1zM15 21h1v1h-1zM16 21h1v1h-1zM17 21h1v1h-1zM18 21h1v1h-1zM22 21h1v1h-1zM23 21h1v1h-1zM25 21h1v1h-1zM26 21h1v1h-1zM27 21h1v1h-1zM28 21h1v1h-1zM29 21h1v1h-1zM31 21h1v1h-1zM32 21h1v1h-1zM35 21h1v1h-1zM36 21h1v1h-1zM1 22h1v1h-1zM4 22h1v1h-1zM6 22h1v1h-1zM10 22h1v1h-1zM13 22h1v1h-1zM15 22h1v1h-1zM16 22h1v1h-1zM18 22h1v1h-1zM20 22h1v1h-1zM21 22h1v1h-1zM22 22h1v1h-1zM23 22h1v1h-1zM25 22h1v1h-1zM27 22h1v1h-1zM31 22h1v1h-1zM32 22h1v1h-1zM33 22h1v1h-1zM34 22h1v1h-1zM0 23h1v1h-1zM1 23h1v1h-1zM2 23h1v1h-1zM3 23h1v1h-1zM5 23h1v1h-1zM7 23h1v1h-1zM9 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM15 23h1v1h-1zM16 23h1v1h-1zM21 23h1v1h-1zM23 23h1v1h-1zM24 23h1v1h-1zM26 23h1v1h-1zM27 23h1v1h-1zM29 23h1v1h-1zM30 23h1v1h-1zM31 23h1v1h-1zM32 23h1v1h-1zM34 23h1v1h-1zM0 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM5 24h1v1h-1zM6 24h1v1h-1zM7 24h1v1h-1zM8 24h1v1h-1zM10 24h1v1h-1zM12 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM20 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1zM29 24h1v1h-1zM30 24h1v1h-1zM32 24h1v1h-1zM33 24h1v1h-1zM34 24h1v1h-1zM36 24h1v1h-1zM0 25h1v1h-1zM1 25h1v1h-1zM2 25h1v1h-1zM3 25h1v1h-1zM4 25h1v1h-1zM5 25h1v1h-1zM7 25h1v1h-1zM8 25h1v1h-1zM9 25h1v1h-1zM12 25h1v1h-1zM18 25h1v1h-1zM19 25h1v1h-1zM22 25h1v1h-1zM23 25h1v1h-1zM27 25h1v1h-1zM28 25h1v1h-1zM30 25h1v1h-1zM32 25h1v1h-1zM33 25h1v1h-1zM2 26h1v1h-1zM3 26h1v1h-1zM4 26h1v1h-1zM6 26h1v1h-1zM9 26h1v1h-1zM12 26h1v1h-1zM14 26h1v1h-1zM15 26h1v1h-1zM18 26h1v1h-1zM19 26h1v1h-1zM21 26h1v1h-1zM23 26h1v1h-1zM26 26h1v1h-1zM27 26h1v1h-1zM31 26h1v1h-1zM32 26h1v1h-1zM2 27h1v1h-1zM4 27h1v1h-1zM5 27h1v1h-1zM7 27h1v1h-1zM8 27h1v1h-1zM9 27h1v1h-1zM10 27h1v1h-1zM12 27h1v1h-1zM14 27h1v1h-1zM15 27h1v1h-1zM16 27h1v1h-1zM17 27h1v1h-1zM18 27h1v1h-1zM19 27h1v1h-1zM20 27h1v1h-1zM21 27h1v1h-1zM22 27h1v1h-1zM23 27h1v1h-1zM26 27h1v1h-1zM28 27h1v1h-1zM34 27h1v1h-1zM35 27h1v1h-1zM0 28h1v1h-1zM1 28h1v1h-1zM4 28h1v1h-1zM5 28h1v1h-1zM6 28h1v1h-1zM10 28h1v1h-1zM12 28h1v1h-1zM16 28h1v1h-1zM20 28h1v1h-1zM21 28h1v1h-1zM23 28h1v1h-1zM24 28h1v1h-1zM26 28h1v1h-1zM28 28h1v1h-1zM29 28h1v1h-1zM30 28h1v1h-1zM31 28h1v1h-1zM32 28h1v1h-1zM34 28h1v1h-1zM35 28h1v1h-1zM36 28h1v1h-1zM8 29h1v1h-1zM12 29h1v1h-1zM16 29h1v1h-1zM18 29h1v1h-1zM21 29h1v1h-1zM22 29h1v1h-1zM23 29h1v1h-1zM26 29h1v1h-1zM27 29h1v1h-1zM28 29h1v1h-1zM32 29h1v1h-1zM35 29h1v1h-1zM36 29h1v1h-1zM0 30h1v1h-1zM1 30h1v1h-1zM2 30h1v1h-1zM3 30h1v1h-1zM4 30h1v1h-1zM5 30h1v1h-1zM6 30h1v1h-1zM8 30h1v1h-1zM10 30h1v1h-1zM13 30h1v1h-1zM15 30h1v1h-1zM17 30h1v1h-1zM23 30h1v1h-1zM28 30h1v1h-1zM30 30h1v1h-1zM32 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM9 31h1v1h-1zM10 31h1v1h-1zM11 31h1v1h-1zM12 31h1v1h-1zM13 31h1v1h-1zM14 31h1v1h-1zM16 31h1v1h-1zM17 31h1v1h-1zM18 31h1v1h-1zM20 31h1v1h-1zM22 31h1v1h-1zM23 31h1v1h-1zM26 31h1v1h-1zM28 31h1v1h-1zM32 31h1v1h-1zM33 31h1v1h-1zM34 31h1v1h-1zM35 31h1v1h-1zM36 31h1v1h-1zM0 32h1v1h-1zM2 32h1v1h-1zM3 32h1v1h-1zM4 32h1v1h-1zM6 32h1v1h-1zM8 32h1v1h-1zM9 32h1v1h-1zM11 32h1v1h-1zM13 32h1v1h-1zM14 32h1v1h-1zM18 32h1v1h-1zM22 32h1v1h-1zM24 32h1v1h-1zM28 32h1v1h-1zM29 32h1v1h-1zM30 32h1v1h-1zM31 32h1v1h-1zM32 32h1v1h-1zM33 32h1v1h-1zM34 32h1v1h-1zM0 33h1v1h-1zM2 33h1v1h-1zM3 33h1v1h-1zM4 33h1v1h-1zM6 33h1v1h-1zM9 33h1v1h-1zM11 33h1v1h-1zM12 33h1v1h-1zM13 33h1v1h-1zM14 33h1v1h-1zM16 33h1v1h-1zM19 33h1v1h-1zM20 33h1v1h-1zM21 33h1v1h-1zM26 33h1v1h-1zM29 33h1v1h-1zM30 33h1v1h-1zM31 33h1v1h-1zM33 33h1v1h-1zM34 33h1v1h-1zM36 33h1v1h-1zM0 34h1v1h-1zM2 34h1v1h-1zM3 34h1v1h-1zM4 34h1v1h-1zM6 34h1v1h-1zM9 34h1v1h-1zM11 34h1v1h-1zM13 34h1v1h-1zM16 34h1v1h-1zM20 34h1v1h-1zM23 34h1v1h-1zM25 34h1v1h-1zM26 34h1v1h-1zM28 34h1v1h-1zM30 34h1v1h-1zM33 34h1v1h-1zM34 34h1v1h-1zM0 35h1v1h-1zM6 35h1v1h-1zM9 35h1v1h-1zM10 35h1v1h-1zM11 35h1v1h-1zM13 35h1v1h-1zM14 35h1v1h-1zM17 35h1v1h-1zM21 35h1v1h-1zM26 35h1v1h-1zM30 35h1v1h-1zM32 35h1v1h-1zM34 35h1v1h-1zM35 35h1v1h-1zM0 36h1v1h-1zM1 36h1v1h-1zM2 36h1v1h-1zM3 36h1v1h-1zM4 36h1v1h-1zM5 36h1v1h-1zM6 36h1v1h-1zM8 36h1v1h-1zM10 36h1v1h-1zM11 36h1v1h-1zM13 36h1v1h-1zM14 36h1v1h-1zM15 36h1v1h-1zM17 36h1v1h-1zM19 36h1v1h-1zM20 36h1v1h-1zM21 36h1v1h-1zM22 36h1v1h-1zM27 36h1v1h-1zM29 36h1v1h-1zM31 36h1v1h-1zM33 36h1v1h-1zM35 36h1v1h-1zM36 36h1v1h-1z"/></svg>
+        </div>
+        <div class="series-actions">
+          <a class="btn full" id="serie-link" href="https://youtube.com/playlist?list=PLgBcPqJQZ0eglSUVJ6OsiXBfhsybHhaGv&amp;si=C1zPT1LyHg2BYYSy" target="_blank" rel="noopener noreferrer">Ver la serie en YouTube</a>
+          <span class="hint">Escaneá el código con la cámara del celular o tocá el botón.</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn ghost full" type="button" id="btn-again">Volver a jugar</button>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var SITUACIONES = [
+    {
+      nombre: "Maga",
+      color: "green",
+      capitulo: "https://youtu.be/9wB50q6CSRg?si=LB4SV8GBLYZzXBCr",
+      tema: "La construcción de una norma",
+      situacion: "Maga participa de una campaña publicitaria de una marca de cosméticos. Al revisar las imágenes, nota que todos los productos para tonos de piel oscuros aparecen agrupados en una categoría llamada «tonos especiales», mientras que los tonos claros ocupan la categoría principal. Cuando consulta por esta decisión, el equipo de marketing responde que es una cuestión de organización comercial.",
+      pregunta: "¿Qué lectura permite identificar una posible manifestación de racismo en esta estrategia?",
+      opciones: [
+        "Es una decisión comercial que no puede analizarse desde una perspectiva racial si no existe una intención explícita de discriminar.",
+        "La clasificación reproduce una jerarquía simbólica en la que ciertos tonos de piel son considerados la norma y otros aparecen como excepciones.",
+        "La segmentación responde exclusivamente a diferencias de demanda entre consumidores y no tiene implicancias culturales."
+      ],
+      correcta: 1,
+      mensaje: "El racismo también se reproduce mediante representaciones y decisiones aparentemente neutrales que establecen qué características son consideradas normales y cuáles quedan ubicadas en un lugar de diferencia. La ausencia de una intención discriminatoria no elimina los posibles efectos de estas prácticas."
+    },
+    {
+      nombre: "Lucas",
+      color: "blue",
+      capitulo: "https://youtu.be/bvvmioCWK5I?si=Zauwh1sVXhVTZsas",
+      tema: "La responsabilidad frente al racismo",
+      situacion: "Lucas trabaja en una empresa donde un compañero realiza comentarios despectivos sobre las personas afrodescendientes. Cuando Lucas manifiesta su desacuerdo, otro compañero le responde que está exagerando y que actualmente «todo es racismo». El resto del equipo evita intervenir para no generar un conflicto laboral.",
+      pregunta: "¿Qué mecanismo contribuye a sostener el racismo en esta situación?",
+      opciones: [
+        "La minimización del problema y la deslegitimación de quienes lo cuestionan, que desplazan la discusión desde el contenido racista hacia la supuesta exageración de quien lo señala.",
+        "La falta de una política empresarial específica sobre diversidad, que es la única responsable de que se produzcan estas situaciones.",
+        "La existencia de opiniones diferentes dentro de un equipo de trabajo, algo que necesariamente forma parte de cualquier espacio laboral."
+      ],
+      correcta: 0,
+      mensaje: "El racismo no se sostiene únicamente mediante expresiones discriminatorias. También se reproduce cuando se minimizan sus consecuencias, se desacredita a quienes lo denuncian o se evita discutirlo. Estas respuestas contribuyen a mantener prácticas racistas sin necesidad de defenderlas abiertamente."
+    },
+    {
+      nombre: "Diana",
+      color: "yellow",
+      capitulo: "https://youtu.be/M9PywuQrDdg?si=1aC5tyNbYYSGpfi8",
+      tema: "El racismo institucional",
+      situacion: "Diana se postula para un puesto jerárquico en una empresa. Tiene formación, experiencia y cumple con todos los requisitos. Sin embargo, durante el proceso de selección le comunican que buscan un perfil que transmita «confianza y buena presencia» para representar a la compañía. Al revisar las contrataciones anteriores, observa que las personas afrodescendientes casi nunca ocupan puestos de atención al público o de representación institucional.",
+      pregunta: "¿Qué permite analizar esta situación desde el concepto de racismo estructural?",
+      opciones: [
+        "La existencia de un caso aislado de discriminación que solamente puede comprobarse si se demuestra una intención racista por parte de quien tomó la decisión.",
+        "La reproducción de desigualdades raciales a través de criterios y prácticas institucionales que, aunque no mencionen explícitamente la raza, producen exclusiones sistemáticas.",
+        "Una problemática vinculada exclusivamente con la falta de diversidad en los procesos de selección, sin relación necesaria con las relaciones históricas de poder."
+      ],
+      correcta: 1,
+      mensaje: "El racismo estructural no depende de una única persona que discrimina. Se manifiesta en la reproducción de desigualdades a través de instituciones, normas y prácticas sociales que condicionan las oportunidades de determinados grupos racializados."
+    },
+    {
+      nombre: "Andrea",
+      color: "pink",
+      capitulo: "https://youtu.be/HAztr3rWyXk?si=ETNd7v-kN9xLmYpW",
+      tema: "La invisibilización de la población afroargentina",
+      situacion: "Andrea participa de una investigación sobre la identidad nacional argentina. Al revisar materiales educativos y producciones audiovisuales, observa que la población afroargentina suele aparecer asociada al período colonial, pero rara vez se muestran sus experiencias contemporáneas, sus organizaciones o sus aportes culturales y políticos. Cuando plantea esta ausencia, le responden que Argentina es un país mayoritariamente descendiente de inmigrantes europeos.",
+      pregunta: "¿Qué relación existe entre esta representación de la identidad nacional y el racismo?",
+      opciones: [
+        "La construcción de una identidad nacional homogénea puede invisibilizar la diversidad étnico-racial y contribuir a reproducir el mito de una Argentina blanca y europea.",
+        "La representación responde a una selección de acontecimientos históricos relevantes y no necesariamente tiene implicancias en la construcción de identidades.",
+        "La ausencia de referencias a la población afroargentina es consecuencia de su escasa participación en la conformación histórica de la sociedad argentina."
+      ],
+      correcta: 0,
+      mensaje: "La idea de una Argentina blanca y europea forma parte de un relato histórico que ha contribuido a invisibilizar la presencia afroargentina. El racismo también opera mediante la construcción de relatos nacionales que excluyen experiencias, identidades y aportes de determinados grupos sociales."
+    },
+    {
+      nombre: "Ramón",
+      color: "green",
+      capitulo: "https://youtu.be/XfF1YB6Pbks?si=QxhRB8fT2zx9UOEn",
+      tema: "El racismo y la apropiación de representaciones",
+      situacion: "Ramón trabaja en la producción de una obra teatral sobre la historia argentina. El equipo decide utilizar blackface para representar personajes afrodescendientes de la época colonial. Ante las críticas, la dirección sostiene que la intención es reconstruir fielmente el pasado y que cuestionar la representación implica censurar una expresión artística.",
+      pregunta: "¿Cuál es el principal problema de este argumento?",
+      opciones: [
+        "Toda representación artística de una identidad racial diferente a la propia constituye necesariamente una práctica discriminatoria.",
+        "La fidelidad histórica justifica el uso de cualquier recurso de representación, siempre que no exista una intención explícita de ofender.",
+        "La intención artística y la contextualización histórica no eliminan los significados racistas de una práctica como el blackface, cuya historia está vinculada a la ridiculización y deshumanización de las personas negras."
+      ],
+      correcta: 2,
+      mensaje: "Las representaciones culturales no son neutrales: construyen sentidos e imaginarios sociales. El blackface tiene una historia de ridiculización y deshumanización de las personas negras. Por eso, analizar una representación requiere considerar no solo la intención de quien la produce, sino también su historia, sus significados y sus efectos."
+    }
+  ];
+
+  var LETRAS = ["A", "B", "C"];
+  var ICON_OK = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>';
+  var ICON_NO = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7"/></svg>';
+
+  var state = { i: 0, answered: false };
+
+  function $(id) { return document.getElementById(id); }
+  var screens = { start: $("screen-start"), quiz: $("screen-quiz"), end: $("screen-end") };
+  var stepsEl = $("steps");
+  var counterEl = $("counter");
+
+  function reducedMotion() {
+    try { return window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { return false; }
+  }
+  function toTop() { window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" }); }
+  function colorVar(name) { return "var(--" + name + ")"; }
+
+  function show(name) {
+    Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== name); });
+    var inQuiz = (name === "quiz");
+    stepsEl.hidden = !inQuiz;
+    counterEl.hidden = !inQuiz;
+  }
+
+  function buildSteps() {
+    stepsEl.innerHTML = "";
+    for (var n = 0; n < SITUACIONES.length; n++) {
+      var s = document.createElement("span");
+      s.className = "step" + (n < state.i ? " done" : (n === state.i ? " now" : ""));
+      s.style.setProperty("--c", colorVar(SITUACIONES[n].color));
+      stepsEl.appendChild(s);
+    }
+    counterEl.textContent = "Situación " + (state.i + 1) + " de " + SITUACIONES.length;
+  }
+
+  function renderQuestion() {
+    var q = SITUACIONES[state.i];
+    state.answered = false;
+    buildSteps();
+    screens.quiz.style.setProperty("--c", colorVar(q.color));
+    $("chip").textContent = q.nombre.charAt(0);
+    $("who-name").textContent = q.nombre;
+    $("who-theme").textContent = q.tema;
+    $("situacion").textContent = q.situacion;
+    $("pregunta").textContent = q.pregunta;
+    $("chapter-link").href = q.capitulo;
+
+    var box = $("options");
+    box.innerHTML = "";
+    q.opciones.forEach(function (texto, idx) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "opt";
+      b.setAttribute("data-i", idx);
+
+      var letter = document.createElement("span");
+      letter.className = "letter";
+      letter.textContent = LETRAS[idx];
+
+      var body = document.createElement("span");
+      body.className = "opt-body";
+      var tag = document.createElement("span");
+      tag.className = "tag";
+      tag.hidden = true;
+      var txt = document.createElement("span");
+      txt.textContent = texto;
+      body.appendChild(tag);
+      body.appendChild(txt);
+
+      var ic = document.createElement("span");
+      ic.setAttribute("aria-hidden", "true");
+
+      b.appendChild(letter);
+      b.appendChild(body);
+      b.appendChild(ic);
+      b.addEventListener("click", function () { answer(idx); });
+      box.appendChild(b);
+    });
+
+    $("feedback").hidden = true;
+    $("btn-next").textContent = (state.i < SITUACIONES.length - 1) ? "Siguiente situación" : "Ver el cierre";
+    show("quiz");
+    toTop();
+    try { $("who-name").focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  function answer(idx) {
+    if (state.answered) return;
+    state.answered = true;
+    var q = SITUACIONES[state.i];
+    var acierto = (idx === q.correcta);
+    var opts = $("options").children;
+
+    for (var n = 0; n < opts.length; n++) {
+      var el = opts[n];
+      var tag = el.querySelector(".tag");
+      var ic = el.lastElementChild;
+      el.setAttribute("aria-disabled", "true");
+      if (n === q.correcta) {
+        el.setAttribute("data-state", "correct");
+        tag.hidden = false;
+        tag.textContent = (n === idx) ? "Tu respuesta · correcta" : "Respuesta correcta";
+        ic.innerHTML = ICON_OK;
+      } else if (n === idx) {
+        el.setAttribute("data-state", "wrong");
+        tag.hidden = false;
+        tag.textContent = "Tu respuesta";
+        ic.innerHTML = ICON_NO;
+      } else {
+        el.setAttribute("data-state", "dim");
+      }
+    }
+
+    var pill = $("pill");
+    pill.className = "pill " + (acierto ? "ok" : "bad");
+    pill.innerHTML = (acierto ? ICON_OK : ICON_NO) +
+      "<span>" + (acierto ? "¡Correcto!" : "Esta vez no, la correcta era la " + LETRAS[q.correcta]) + "</span>";
+    pill.querySelector("svg").style.marginTop = "0";
+    $("fb-msg").textContent = q.mensaje;
+
+    var fb = $("feedback");
+    fb.hidden = false;
+    fb.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "nearest" });
+    try { pill.focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  function next() {
+    if (state.i < SITUACIONES.length - 1) {
+      state.i++;
+      renderQuestion();
+    } else {
+      showEnd();
+    }
+  }
+
+  function showEnd() {
+    show("end");
+    toTop();
+    try { $("end-title").focus({ preventScroll: true }); } catch (e) {}
+  }
+
+  function restart() {
+    state.i = 0;
+    state.answered = false;
+    show("start");
+    toTop();
+  }
+
+  $("btn-start").addEventListener("click", function () { state.i = 0; renderQuestion(); });
+  $("btn-next").addEventListener("click", next);
+  $("btn-again").addEventListener("click", restart);
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    if (screens.quiz.hidden || state.answered) return;
+    var k = (ev.key || "").toLowerCase();
+    var idx = ["a", "b", "c"].indexOf(k);
+    if (idx > -1) answer(idx);
+  });
+})();
+</script>
+</body>
+</html>
